@@ -7,6 +7,8 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { OrderConfirmationPage } from './pages/OrderConfirmationPage';
+import { AuthPage } from './pages/AuthPage';
+import { AccountPage } from './pages/AccountPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -233,6 +235,33 @@ export default function App() {
             order={confirmedOrder}
             onContinueShopping={() => handleNavigate('catalogue')}
             onViewOrders={() => handleNavigate('account')}
+          />
+        )}
+
+        {currentPage === 'login' && (
+          <AuthPage
+            onAuthSuccess={(loggedInUser) => {
+              setUser(loggedInUser);
+              if (cart.length > 0) {
+                handleNavigate('checkout');
+              } else {
+                handleNavigate('account');
+              }
+            }}
+            onCancel={() => handleNavigate('home')}
+          />
+        )}
+
+        {currentPage === 'account' && (
+          <AccountPage
+            user={user}
+            onNavigate={handleNavigate}
+            onLogout={() => {
+              localStorage.removeItem('luxemart_token');
+              localStorage.removeItem('luxemart_user');
+              setUser(null);
+              handleNavigate('home');
+            }}
           />
         )}
       </main>
