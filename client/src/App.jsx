@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
+import { CataloguePage } from './pages/CataloguePage';
+import { ProductDetailPage } from './pages/ProductDetailPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -127,21 +129,55 @@ export default function App() {
       />
 
       <main style={{ flex: 1 }}>
-        <HomePage
-          categories={categories}
-          products={products}
-          onSelectCategory={(catSlug) => {
-            setSelectedCategory(catSlug);
-            handleNavigate('catalogue');
-          }}
-          onViewProduct={(product) => {
-            setSelectedProduct(product);
-            handleNavigate('product-detail');
-          }}
-          onAddToCart={handleAddToCart}
-          addedProductIds={addedProductIds}
-          onExploreAll={() => handleNavigate('catalogue')}
-        />
+        {currentPage === 'home' && (
+          <HomePage
+            categories={categories}
+            products={products}
+            onSelectCategory={(catSlug) => {
+              setSelectedCategory(catSlug);
+              handleNavigate('catalogue');
+            }}
+            onViewProduct={(product) => {
+              setSelectedProduct(product);
+              handleNavigate('product-detail');
+            }}
+            onAddToCart={handleAddToCart}
+            addedProductIds={addedProductIds}
+            onExploreAll={() => handleNavigate('catalogue')}
+          />
+        )}
+
+        {currentPage === 'catalogue' && (
+          <CataloguePage
+            categories={categories}
+            initialCategory={selectedCategory}
+            initialSearch={searchQuery}
+            onViewProduct={(product) => {
+              setSelectedProduct(product);
+              handleNavigate('product-detail');
+            }}
+            onAddToCart={handleAddToCart}
+            addedProductIds={addedProductIds}
+          />
+        )}
+
+        {currentPage === 'product-detail' && selectedProduct && (
+          <ProductDetailPage
+            product={selectedProduct}
+            onBack={() => handleNavigate('catalogue')}
+            onAddToCart={handleAddToCart}
+            onBuyNow={(prod, qty) => {
+              handleAddToCart(prod, qty);
+              handleNavigate('cart');
+            }}
+            isAdded={addedProductIds.has(selectedProduct.id)}
+            addedProductIds={addedProductIds}
+            onViewProduct={(product) => {
+              setSelectedProduct(product);
+              handleNavigate('product-detail');
+            }}
+          />
+        )}
       </main>
 
       <Footer />
