@@ -105,7 +105,7 @@ router.put('/orders/:id/status', (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Order not found.' });
     }
 
-    db.prepare('UPDATE orders SET status = ?, updated_at = datetime("now") WHERE id = ?').run(status, req.params.id);
+    db.prepare('UPDATE orders SET status = ?, updated_at = datetime(\'now\') WHERE id = ?').run(status, req.params.id);
 
     res.json({
       success: true,
@@ -252,7 +252,7 @@ router.put('/products/:id/stock', (req, res, next) => {
     }
 
     const db = getDb();
-    db.prepare('UPDATE products SET stock_quantity = ?, updated_at = datetime("now") WHERE id = ?').run(qty, req.params.id);
+    db.prepare('UPDATE products SET stock_quantity = ?, updated_at = datetime(\'now\') WHERE id = ?').run(qty, req.params.id);
 
     res.json({
       success: true,

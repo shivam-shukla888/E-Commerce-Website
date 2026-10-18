@@ -2,15 +2,33 @@ const bcrypt = require('bcryptjs');
 const { getDb } = require('./connection');
 const { initSchema } = require('./schema');
 
-function seedDatabase(customDb = null) {
+function seedDatabase(customDb = null, force = false) {
   const db = customDb || getDb();
   initSchema(db);
 
-  // Check if categories already seeded
-  const existingCategories = db.prepare('SELECT COUNT(*) as count FROM categories').get();
-  if (existingCategories.count > 0) {
-    console.log('Database already seeded. Skipping.');
-    return;
+  if (process.argv.includes('--force') || force) {
+    db.exec(`
+      DELETE FROM order_items;
+      DELETE FROM orders;
+      DELETE FROM products;
+      DELETE FROM categories;
+      DELETE FROM users;
+    `);
+  } else {
+    // Check if products already seeded
+    const existingProducts = db.prepare('SELECT COUNT(*) as count FROM products').get();
+    if (existingProducts.count >= 10) {
+      console.log('Database already seeded. Skipping.');
+      return;
+    }
+    // Clean before fresh seed to avoid partial conflicts
+    db.exec(`
+      DELETE FROM order_items;
+      DELETE FROM orders;
+      DELETE FROM products;
+      DELETE FROM categories;
+      DELETE FROM users;
+    `);
   }
 
   console.log('Seeding database with demo categories, products, and users...');

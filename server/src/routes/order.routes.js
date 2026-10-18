@@ -50,7 +50,7 @@ router.post('/', authenticateToken, (req, res, next) => {
     // Atomic transaction for order creation and inventory deduction
     const executeOrderTransaction = db.transaction(() => {
       const getProductStmt = db.prepare('SELECT id, name, price_paise, stock_quantity FROM products WHERE id = ?');
-      const deductStockStmt = db.prepare('UPDATE products SET stock_quantity = stock_quantity - ?, updated_at = datetime("now") WHERE id = ?');
+      const deductStockStmt = db.prepare('UPDATE products SET stock_quantity = stock_quantity - ?, updated_at = datetime(\'now\') WHERE id = ?');
       const insertOrderStmt = db.prepare(`
         INSERT INTO orders (
           order_number, user_id, subtotal_paise, shipping_fee_paise, tax_paise, total_amount_paise,
