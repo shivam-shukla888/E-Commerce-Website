@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth.routes');
 const productRoutes = require('./routes/product.routes');
 const categoryRoutes = require('./routes/category.routes');
 const orderRoutes = require('./routes/order.routes');
+const adminRoutes = require('./routes/admin.routes');
 
 const app = express();
 
@@ -60,6 +61,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Centralized error handler
 app.use(errorHandler);

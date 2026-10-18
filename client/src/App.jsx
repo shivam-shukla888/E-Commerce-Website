@@ -9,6 +9,7 @@ import { CheckoutPage } from './pages/CheckoutPage';
 import { OrderConfirmationPage } from './pages/OrderConfirmationPage';
 import { AuthPage } from './pages/AuthPage';
 import { AccountPage } from './pages/AccountPage';
+import { AdminDashboardPage } from './pages/AdminDashboardPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -263,6 +264,25 @@ export default function App() {
               handleNavigate('home');
             }}
           />
+        )}
+
+        {currentPage === 'admin' && (
+          user?.role === 'admin' ? (
+            <AdminDashboardPage
+              user={user}
+              onBackToStore={() => handleNavigate('home')}
+            />
+          ) : (
+            <div className="container" style={{ padding: '80px 0', textAlign: 'center' }}>
+              <h2 style={{ color: 'var(--accent-rose)', marginBottom: '16px' }}>Access Denied</h2>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>
+                You must be logged in as an Administrator to view the Store Management Console.
+              </p>
+              <button className="btn btn-primary btn-sm" onClick={() => handleNavigate('login')}>
+                Sign In as Admin
+              </button>
+            </div>
+          )
         )}
       </main>
 
