@@ -4,6 +4,9 @@ import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
 import { CataloguePage } from './pages/CataloguePage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
+import { CartPage } from './pages/CartPage';
+import { CheckoutPage } from './pages/CheckoutPage';
+import { OrderConfirmationPage } from './pages/OrderConfirmationPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -30,6 +33,20 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [addedProductIds, setAddedProductIds] = useState(new Set());
   const [loading, setLoading] = useState(true);
+  const [checkoutQuote, setCheckoutQuote] = useState(null);
+  const [confirmedOrder, setConfirmedOrder] = useState(null);
+
+  const handleUpdateQuantity = (productId, quantity) => {
+    setCart(prev => prev.map(item => item.id === productId ? { ...item, quantity } : item));
+  };
+
+  const handleRemoveItem = (productId) => {
+    setCart(prev => prev.filter(item => item.id !== productId));
+  };
+
+  const handleClearCart = () => {
+    setCart([]);
+  };
 
   // Sync cart to localStorage
   useEffect(() => {
@@ -176,6 +193,46 @@ export default function App() {
               setSelectedProduct(product);
               handleNavigate('product-detail');
             }}
+          />
+        )}
+
+        {currentPage === 'cart' && (
+          <CartPage
+            cart={cart}
+            onUpdateQuantity={handleUpdateQuantity}
+            onRemoveItem={handleRemoveItem}
+            onClearCart={handleClearCart}
+            onProceedCheckout={(quote) => {
+              setCheckoutQuote(quote);
+              handleNavigate('checkout');
+            }}
+            onContinueShopping={() => handleNavigate('catalogue')}
+          />
+        )}
+
+        {currentPage === 'checkout' && (
+          <CheckoutPage
+            cart={cart}
+            user={user}
+            checkoutQuote={checkoutQuote}
+            onBackToCart={() => handleNavigate('cart')}
+            onRequireAuth={(msg) => {
+              alert(msg || 'Please sign in to proceed with checkout.');
+              handleNavigate('login');
+            }}
+            onOrderSuccess={(order) => {
+              setConfirmedOrder(order);
+              setCart([]);
+              handleNavigate('order-confirmation');
+            }}
+          />
+        )}
+
+        {currentPage === 'order-confirmation' && (
+          <OrderConfirmationPage
+            order={confirmedOrder}
+            onContinueShopping={() => handleNavigate('catalogue')}
+            onViewOrders={() => handleNavigate('account')}
           />
         )}
       </main>
